@@ -1,0 +1,166 @@
+{% include 'admin_header.html' %}
+
+<div class="container py-5" style="margin-top: 70px;">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <div class="d-inline-flex align-items-center gap-2 mb-1">
+                <span class="badge-clean badge-clean-neutral">Booking #{{ data['booking']['booking_id'] }}</span>
+                {% if data['booking']['status'] == 'Confirmed' %}
+                    <span class="badge-clean badge-clean-info">Confirmed</span>
+                {% elif data['booking']['status'] == 'In Progress' %}
+                    <span class="badge-clean badge-clean-warning">In Progress</span>
+                {% elif data['booking']['status'] == 'Completed' %}
+                    <span class="badge-clean badge-clean-success">Completed</span>
+                {% elif data['booking']['status'] == 'Cancelled' %}
+                    <span class="badge-clean badge-clean-danger">Cancelled</span>
+                {% endif %}
+            </div>
+            <h3 class="fw-bold mb-0">Booking Lifecycle Details</h3>
+        </div>
+        <a href="/admin/adminvieworders" class="btn-clean-outline btn-clean-sm">&larr; Back to Bookings</a>
+    </div>
+
+    <!-- Live Stepper in Admin View (Innovation) -->
+    <div class="card-clean p-4 mb-4">
+        <h6 class="fw-bold text-muted small text-uppercase mb-3">Service Progression Stepper</h6>
+        <div class="stepper-clean">
+            <div class="step-item {% if data['booking']['status'] in ('Confirmed', 'In Progress', 'Completed') %}completed{% else %}active{% endif %}">
+                <div class="step-circle"><i class="fa fa-receipt small"></i></div>
+                <span class="step-title">1. Placed</span>
+            </div>
+            <div class="step-item {% if data['booking']['maid_fname'] and data['booking']['maid_fname'] != 'Unassigned' %}completed{% else %}active{% endif %}">
+                <div class="step-circle"><i class="fa fa-user-check small"></i></div>
+                <span class="step-title">2. Maid Assigned</span>
+            </div>
+            <div class="step-item {% if data['booking']['status'] == 'Completed' %}completed{% elif data['booking']['status'] == 'In Progress' %}active{% endif %}">
+                <div class="step-circle"><i class="fa fa-broom small"></i></div>
+                <span class="step-title">3. In Progress</span>
+            </div>
+            <div class="step-item {% if data['booking']['status'] == 'Completed' %}completed{% endif %}">
+                <div class="step-circle"><i class="fa fa-check-double small"></i></div>
+                <span class="step-title">4. Completed</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <!-- Customer Card -->
+        <div class="col-md-6">
+            <div class="card-clean p-4 h-100">
+                <h6 class="fw-bold mb-3"><i class="fa fa-user me-2 text-primary"></i> Customer Information</h6>
+                <div class="p-3 bg-light rounded-3">
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-muted small">Name:</span>
+                        <span class="fw-semibold small">{{ data['booking']['c_fname'] }} {{ data['booking']['c_lname'] }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-muted small">Phone:</span>
+                        <span class="small">{{ data['booking']['c_phone'] }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-muted small">Email:</span>
+                        <span class="small">{{ data['booking']['c_email'] }}</span>
+                    </div>
+                    <div class="border-top pt-2 mt-2">
+                        <span class="text-muted small d-block">Service Address:</span>
+                        <span class="small fw-medium">{{ data['booking']['booking_address'] }}, {{ data['booking']['c_city'] }}</span>
+                    </div>
+                    {% if data['booking']['notes'] %}
+                    <div class="border-top pt-2 mt-2">
+                        <span class="text-muted small d-block">Scope / Instructions:</span>
+                        <span class="small text-dark fst-italic">{{ data['booking']['notes'] }}</span>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Service & Maid Card -->
+        <div class="col-md-6">
+            <div class="card-clean p-4 h-100">
+                <h6 class="fw-bold mb-3"><i class="fa fa-broom me-2 text-primary"></i> Service & Partner Details</h6>
+                <div class="p-3 bg-light rounded-3">
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-muted small">Requested Service:</span>
+                        <span class="fw-bold small text-primary">{{ data['booking']['service'] }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-muted small">Date & Shift:</span>
+                        <span class="small">{{ data['booking']['booking_date'] }} ({{ data['booking']['slot'] }})</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-muted small">Assigned Maid:</span>
+                        <span class="small fw-semibold text-success">{{ data['booking']['maid_fname'] or 'Unassigned' }} {{ data['booking']['maid_lname'] or '' }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-muted small">Maid Phone:</span>
+                        <span class="small">{{ data['booking']['maid_phone'] or 'N/A' }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between border-top pt-2 mt-2">
+                        <span class="text-muted small">Total Charge:</span>
+                        <span class="fw-bold fs-5 text-dark">₹{{ data['booking']['total_amount'] }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Payment Card -->
+        <div class="col-md-6">
+            <div class="card-clean p-4 h-100">
+                <h6 class="fw-bold mb-3"><i class="fa fa-credit-card me-2 text-primary"></i> Payment Record</h6>
+                {% if data['payment'] %}
+                    {% for p in data['payment'] %}
+                    <div class="p-3 bg-light rounded-3 mb-2">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-muted small">Method:</span>
+                            <span class="badge-clean badge-clean-neutral">{{ p['payment_method'] }}</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-muted small">Transaction Ref:</span>
+                            <code class="small">{{ p['transaction_id'] }}</code>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-muted small">Payment Status:</span>
+                            <span class="badge-clean badge-clean-success">{{ p['payment_status'] }}</span>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <span class="text-muted small">Timestamp:</span>
+                            <small class="text-muted">{{ p['payment_date'] }}</small>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <p class="text-muted small mb-0">No payment record logged yet.</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Customer Review -->
+        <div class="col-md-6">
+            <div class="card-clean p-4 h-100">
+                <h6 class="fw-bold mb-3"><i class="fa fa-star me-2 text-warning"></i> Customer Testimonial</h6>
+                {% if data['review'] %}
+                    {% for r in data['review'] %}
+                    <div class="p-3 bg-light rounded-3">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="text-warning fs-6">
+                                {% for i in range(r['rating']|int) %}★{% endfor %}
+                                {% for i in range(5 - r['rating']|int) %}☆{% endfor %}
+                            </span>
+                            <span class="small fw-semibold">({{ r['rating'] }} / 5 Stars)</span>
+                        </div>
+                        <blockquote class="small text-dark mb-2">
+                            "{{ r['review_text'] }}"
+                        </blockquote>
+                        <small class="text-muted d-block text-end">{{ r['review_date'] }}</small>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <p class="text-muted small mb-0">No review has been submitted for this booking yet.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+{% include 'footer.html' %}

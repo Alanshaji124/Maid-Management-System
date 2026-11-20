@@ -1,0 +1,213 @@
+{% include 'customer_header.html' %}
+
+<div class="container py-5" style="margin-top: 70px;">
+    <div class="row justify-content-center">
+        <div class="col-lg-9">
+            <div class="card-clean p-4 p-md-5">
+                <div class="mb-4 text-center">
+                    <span class="badge-clean badge-clean-neutral mb-2">Scheduling Flow</span>
+                    <h3 class="fw-bold mb-1">Book a Maid Service</h3>
+                    <p class="text-muted small">Customize your household requirements with transparent live calculation.</p>
+                </div>
+
+                <form action="" method="post" id="bookingForm">
+                    <input type="hidden" name="calculated_total" id="calculatedTotalInput" value="350">
+
+                    <div class="row g-4">
+                        <!-- Service & Maid Selection -->
+                        <div class="col-md-6">
+                            <label class="form-label-clean">1. Select Service <span class="text-danger">*</span></label>
+                            <select name="service_id" id="serviceSelect" class="form-select form-select-clean" required onchange="recalculatePrice()">
+                                <option value="">-- Choose a Service --</option>
+                                {% for s in data['services'] %}
+                                <option value="{{ s['service_id'] }}" data-rate="{{ s['rate'] }}"
+                                        {% if data['selected_service_id'] == s['service_id']|string %}selected{% endif %}>
+                                    {{ s['service'] }} (Base: ₹{{ s['rate'] }})
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label-clean">2. Preferred Maid Partner</label>
+                            <select name="maid_id" class="form-select form-select-clean">
+                                <option value="0">-- Auto-Assign Nearest Available Maid --</option>
+                                {% for m in data['maids'] %}
+                                <option value="{{ m['maid_id'] }}"
+                                        {% if data['selected_maid_id'] == m['maid_id']|string %}selected{% endif %}>
+                                    {{ m['maid_fname'] }} {{ m['maid_lname'] }} ({{ m['maid_city'] }}, Exp: {{ m['experience'] }})
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <!-- Date & Shift Slot -->
+                        <div class="col-md-6">
+                            <label class="form-label-clean">3. Service Date <span class="text-danger">*</span></label>
+                            <input type="date" name="booking_date" class="form-control form-control-clean" required id="bookingDate">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label-clean">4. Working Shift Slot <span class="text-danger">*</span></label>
+                            <select name="slot_id" class="form-select form-select-clean" required>
+                                <option value="">-- Select Shift Slot --</option>
+                                {% for sl in data['slots'] %}
+                                <option value="{{ sl['slot_id'] }}">
+                                    {{ sl['slot'] }} ({{ sl['fromtime'] }} - {{ sl['totime'] }})
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <!-- INNOVATION: House Size & Workload Customizer -->
+                        <div class="col-12">
+                            <div class="p-3 bg-light rounded-3 border">
+                                <label class="form-label-clean d-block mb-2">5. House Layout / Size (Workload Scope)</label>
+                                <div class="row g-2">
+                                    <div class="col-6 col-md-3">
+                                        <input type="radio" class="btn-check" name="house_size" id="size1" value="1 BHK / Studio" data-extra="0" checked onchange="recalculatePrice()">
+                                        <label class="btn btn-outline-secondary w-100 text-start p-2 small" for="size1">
+                                            <strong>1 BHK / Studio</strong><br><small class="text-muted">Standard base</small>
+                                        </label>
+                                    </div>
+                                    <div class="col-6 col-md-3">
+                                        <input type="radio" class="btn-check" name="house_size" id="size2" value="2 BHK Apartment" data-extra="100" onchange="recalculatePrice()">
+                                        <label class="btn btn-outline-secondary w-100 text-start p-2 small" for="size2">
+                                            <strong>2 BHK</strong><br><small class="text-muted">+₹100 (Medium)</small>
+                                        </label>
+                                    </div>
+                                    <div class="col-6 col-md-3">
+                                        <input type="radio" class="btn-check" name="house_size" id="size3" value="3 BHK Apartment" data-extra="200" onchange="recalculatePrice()">
+                                        <label class="btn btn-outline-secondary w-100 text-start p-2 small" for="size3">
+                                            <strong>3 BHK</strong><br><small class="text-muted">+₹200 (Large)</small>
+                                        </label>
+                                    </div>
+                                    <div class="col-6 col-md-3">
+                                        <input type="radio" class="btn-check" name="house_size" id="size4" value="Villa / 4+ BHK" data-extra="350" onchange="recalculatePrice()">
+                                        <label class="btn btn-outline-secondary w-100 text-start p-2 small" for="size4">
+                                            <strong>Villa / 4+ BHK</strong><br><small class="text-muted">+₹350 (Full Estate)</small>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <!-- Add-on Services -->
+                                <label class="form-label-clean d-block mt-3 mb-2">Optional Extra Add-Ons</label>
+                                <div class="row g-2">
+                                    <div class="col-md-4">
+                                        <div class="form-check p-2 border rounded bg-white small">
+                                            <input class="form-check-input addon-checkbox" type="checkbox" name="addons" value="Balcony & Window Wash" data-price="120" id="addon1" onchange="recalculatePrice()">
+                                            <label class="form-check-label fw-medium ms-1" for="addon1">
+                                                Balcony & Window Wash (+₹120)
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-check p-2 border rounded bg-white small">
+                                            <input class="form-check-input addon-checkbox" type="checkbox" name="addons" value="Deep Fridge Degreasing" data-price="150" id="addon2" onchange="recalculatePrice()">
+                                            <label class="form-check-label fw-medium ms-1" for="addon2">
+                                                Fridge & Oven Clean (+₹150)
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-check p-2 border rounded bg-white small">
+                                            <input class="form-check-input addon-checkbox" type="checkbox" name="addons" value="Ironing & Linen Press" data-price="100" id="addon3" onchange="recalculatePrice()">
+                                            <label class="form-check-label fw-medium ms-1" for="addon3">
+                                                Ironing & Linen Press (+₹100)
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Address & Contact -->
+                        <div class="col-md-8">
+                            <label class="form-label-clean">6. Service Address & Landmark <span class="text-danger">*</span></label>
+                            <input type="text" name="address" class="form-control form-control-clean" required placeholder="Apartment name, Flat number, Street, Landmark" value="{{ data['customer']['c_housename'] }}, {{ data['customer']['c_street'] }}, {{ data['customer']['c_city'] }}">
+                        </div>
+
+                        <div class="col-md-4">
+                            <label class="form-label-clean">7. Contact Phone <span class="text-danger">*</span></label>
+                            <input type="tel" name="phone" class="form-control form-control-clean" required value="{{ data['customer']['c_phone'] }}">
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label-clean">8. Special Notes or Instructions</label>
+                            <textarea name="notes" class="form-control form-control-clean" rows="2" placeholder="e.g. Key is with security guard, pets at home, please focus on kitchen counters..."></textarea>
+                        </div>
+
+                        <!-- LIVE PRICE BREAKDOWN CALCULATOR (INNOVATION) -->
+                        <div class="col-12">
+                            <div class="p-4 rounded-3 border bg-white shadow-xs">
+                                <div class="row align-items-center">
+                                    <div class="col-md-8">
+                                        <h6 class="fw-bold mb-1">Live Transparent Estimate</h6>
+                                        <div class="small text-muted" id="priceBreakdownDetails">
+                                            Base Service: ₹350.00 • Layout: ₹0.00 • Add-ons: ₹0.00
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 text-md-end mt-2 mt-md-0">
+                                        <span class="small text-muted text-uppercase d-block fw-semibold">Total Payable</span>
+                                        <span class="fs-3 fw-extrabold text-dark" id="displayTotalPrice">₹350.00</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div class="col-12 text-center mt-4">
+                            <button type="submit" class="btn-clean-primary btn-lg px-5 py-2 fw-bold">
+                                Proceed to Confirm & Pay &rarr;
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Set minimum date to today
+    const dateInput = document.getElementById('bookingDate');
+    const today = new Date().toISOString().split('T')[0];
+    dateInput.min = today;
+    if (!dateInput.value) dateInput.value = today;
+
+    function recalculatePrice() {
+        const serviceSelect = document.getElementById('serviceSelect');
+        const selectedOption = serviceSelect.options[serviceSelect.selectedIndex];
+        let baseRate = 350.0;
+        if (selectedOption && selectedOption.getAttribute('data-rate')) {
+            baseRate = parseFloat(selectedOption.getAttribute('data-rate'));
+        }
+
+        // House size extra
+        const sizeRadios = document.getElementsByName('house_size');
+        let sizeExtra = 0;
+        for (let r of sizeRadios) {
+            if (r.checked) {
+                sizeExtra = parseFloat(r.getAttribute('data-extra') || 0);
+                break;
+            }
+        }
+
+        // Add-ons extra
+        let addonsExtra = 0;
+        const addonBoxes = document.querySelectorAll('.addon-checkbox:checked');
+        addonBoxes.forEach(box => {
+            addonsExtra += parseFloat(box.getAttribute('data-price') || 0);
+        });
+
+        const total = baseRate + sizeExtra + addonsExtra;
+        document.getElementById('displayTotalPrice').innerText = '₹' + total.toFixed(2);
+        document.getElementById('calculatedTotalInput').value = total.toFixed(2);
+        document.getElementById('priceBreakdownDetails').innerText = 
+            `Base Service: ₹${baseRate.toFixed(2)} • House Scope: +₹${sizeExtra.toFixed(2)} • Add-ons: +₹${addonsExtra.toFixed(2)}`;
+    }
+
+    document.addEventListener('DOMContentLoaded', recalculatePrice);
+</script>
+
+{% include 'footer.html' %}

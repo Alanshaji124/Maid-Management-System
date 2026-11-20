@@ -1,0 +1,64 @@
+{% include 'customer_header.html' %}
+
+<div class="container py-5" style="margin-top: 70px;">
+    <div class="row justify-content-center">
+        <div class="col-lg-7">
+            <div class="card-clean p-4 p-md-5">
+                <div class="mb-4">
+                    <span class="badge-clean badge-clean-neutral mb-2">Account Settings</span>
+                    <h3 class="fw-bold mb-1">My Customer Profile</h3>
+                    <p class="text-muted small">Update your residential address and contact details.</p>
+                </div>
+
+                <form action="" method="post">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label-clean">First Name</label>
+                            <input type="text" name="fname" class="form-control form-control-clean" required value="{{ data['customer']['c_fname'] }}">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label-clean">Last Name</label>
+                            <input type="text" name="lname" class="form-control form-control-clean" required value="{{ data['customer']['c_lname'] }}">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label-clean">Email Address</label>
+                            <input type="email" class="form-control form-control-clean bg-light" readonly value="{{ data['customer']['username'] }}">
+                            <small class="text-muted">Primary identifier</small>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label-clean">Contact Phone Number</label>
+                            <input type="tel" name="phone" class="form-control form-control-clean" required value="{{ data['customer']['c_phone'] }}">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label-clean">House / Flat Name</label>
+                            <input type="text" name="house" class="form-control form-control-clean" required value="{{ data['customer']['c_housename'] }}">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label-clean">Street / Landmark</label>
+                            <input type="text" name="street" class="form-control form-control-clean" required value="{{ data['customer']['c_street'] }}">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label-clean">City</label>
+                            <input type="text" name="city" class="form-control form-control-clean" required value="{{ data['customer']['c_city'] }}">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label-clean">Pincode</label>
+                            <input type="text" name="pin" class="form-control form-control-clean" required maxlength="6" value="{{ data['customer']['c_pincode'] }}">
+                        </div>
+
+                        <div class="col-12 text-end mt-4">
+                            <button type="submit" class="btn-clean-primary px-4 py-2">
+                                Save Profile Changes
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% include 'footer.html' %}

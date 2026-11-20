@@ -1,0 +1,87 @@
+{% include 'public_header.html' %}
+
+<div class="container py-5" style="margin-top: 80px;">
+    <div class="row justify-content-center">
+        <div class="col-lg-7">
+            <div class="card-clean p-4 p-md-5">
+                <div class="text-center mb-4">
+                    <span class="badge-clean badge-clean-neutral mb-2">New Customer</span>
+                    <h3 class="fw-bold mb-1">Create an Account</h3>
+                    <p class="text-muted small">Join HomeMaid to book background-checked maids on demand.</p>
+                </div>
+
+                <form action="" method="post">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label-clean">First Name <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control form-control-clean" required placeholder="Arun" name="fname">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label-clean">Last Name <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control form-control-clean" required placeholder="Kumar" name="lname">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label-clean">Email Address <span class="text-danger">*</span></label>
+                            <input type="email" class="form-control form-control-clean" required placeholder="name@example.com" name="email">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label-clean">Password <span class="text-danger">*</span></label>
+                            <input type="password" class="form-control form-control-clean" required placeholder="Create strong password" name="password">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label-clean">Phone Number <span class="text-danger">*</span></label>
+                            <input type="tel" class="form-control form-control-clean" maxlength="10" required placeholder="10-digit mobile number" name="phone">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label-clean">Gender</label>
+                            <select name="gender" class="form-select form-select-clean" required>
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label-clean">Date of Birth</label>
+                            <input type="date" class="form-control form-control-clean" required name="dob">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label-clean">House / Flat Name <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control form-control-clean" required placeholder="e.g. Arun Nivas, Flat 4B" name="house">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label-clean">Street / Area <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control form-control-clean" required placeholder="Street / Landmark" name="street">
+                        </div>
+
+                        <div class="col-md-4">
+                            <label class="form-label-clean">City <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control form-control-clean" required placeholder="Kochi" name="city">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label-clean">State</label>
+                            <input type="text" class="form-control form-control-clean" required placeholder="State" name="state" value="Kerala">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label-clean">Pincode <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control form-control-clean" maxlength="6" required placeholder="682030" name="pin">
+                        </div>
+
+                        <div class="col-12 mt-4 text-center">
+                            <button type="submit" name="submit" class="btn-clean-primary w-100 py-2 mb-3">
+                                Create Account &rarr;
+                            </button>
+                            <div class="small text-muted">
+                                Already have an account? <a href="/login" class="fw-semibold text-primary">Sign in here</a>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% include 'footer.html' %}

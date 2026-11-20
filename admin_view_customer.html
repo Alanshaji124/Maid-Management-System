@@ -1,0 +1,81 @@
+{% include 'admin_header.html' %}
+
+<div class="container py-5" style="margin-top: 70px;">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <span class="badge-clean badge-clean-neutral mb-1">User Directory</span>
+            <h3 class="fw-bold mb-0">Registered Customers</h3>
+        </div>
+        <span class="badge-clean badge-clean-neutral">Total: {{ data['viewcus']|length }} Accounts</span>
+    </div>
+
+    <!-- Search Bar -->
+    <div class="card-clean p-3 mb-4">
+        <form action="" method="post" class="row g-2 align-items-center">
+            <div class="col-md-9">
+                <input type="text" name="search" class="form-control form-control-clean" placeholder="Search by customer name, phone, city, or email...">
+            </div>
+            <div class="col-md-3">
+                <button type="submit" name="sc" class="btn-clean-primary w-100 py-2"><i class="fa fa-search me-1"></i> Filter Customers</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Customers Table -->
+    <div class="card-clean overflow-hidden">
+        <div class="table-responsive">
+            <table class="table-clean">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Address</th>
+                        <th>City / Pin</th>
+                        <th>Gender</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if data['viewcus'] %}
+                        {% for r in data['viewcus'] %}
+                        <tr>
+                            <td><span class="badge-clean badge-clean-neutral">{{ loop.index }}</span></td>
+                            <td class="fw-semibold text-dark">{{ r['c_fname'] }} {{ r['c_lname'] }}</td>
+                            <td><small class="text-muted">{{ r['c_email'] }}</small></td>
+                            <td>{{ r['c_phone'] }}</td>
+                            <td><small class="text-muted">{{ r['c_housename'] }}, {{ r['c_street'] }}</small></td>
+                            <td>{{ r['c_city'] }} <small class="text-muted">({{ r['c_pincode'] }})</small></td>
+                            <td><span class="badge-clean badge-clean-neutral">{{ r['c_gender'] }}</span></td>
+                            <td>
+                                {% if r['c_status'] == 'active' %}
+                                    <span class="badge-clean badge-clean-success">Active</span>
+                                {% else %}
+                                    <span class="badge-clean badge-clean-danger">Inactive</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if r['c_status'] == 'active' %}
+                                    <a href="?action=inactive&cid={{ r['customer_id'] }}&uname={{ r['username'] }}"
+                                       class="btn-clean-outline btn-clean-sm text-danger" onclick="return confirm('Deactivate this customer?')">Deactivate</a>
+                                {% else %}
+                                    <a href="?action=active&cid={{ r['customer_id'] }}&uname={{ r['username'] }}"
+                                       class="btn-clean-outline btn-clean-sm text-success" onclick="return confirm('Activate this customer?')">Activate</a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="9" class="text-center py-5 text-muted">No customer records found.</td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+{% include 'footer.html' %}

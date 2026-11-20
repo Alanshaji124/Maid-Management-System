@@ -1,0 +1,92 @@
+{% include 'customer_header.html' %}
+
+<div class="container py-5" style="margin-top: 70px;">
+    <div class="mb-4">
+        <span class="badge-clean badge-clean-neutral mb-1">Customer Support</span>
+        <h3 class="fw-bold mb-0">Help & Inquiries</h3>
+        <p class="text-muted small">Submit an issue ticket or view official resolution replies from administration.</p>
+    </div>
+
+    <div class="row g-4">
+        <!-- New Ticket Form -->
+        <div class="col-lg-5">
+            <div class="card-clean p-4 h-100">
+                <h5 class="fw-bold mb-3">Open New Support Ticket</h5>
+                <form action="" method="post">
+                    <div class="mb-3">
+                        <label class="form-label-clean">Related Booking (Optional)</label>
+                        <select name="booking_id" class="form-select form-select-clean">
+                            <option value="0">-- General Issue / Non-booking inquiry --</option>
+                            {% for b in data['my_bookings'] %}
+                            <option value="{{ b['booking_id'] }}">Booking #{{ b['booking_id'] }} ({{ b['booking_date'] }})</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label-clean">Details of Complaint or Inquiry</label>
+                        <textarea name="complaint" class="form-control form-control-clean" rows="5" required placeholder="Describe what went wrong or how we can assist..."></textarea>
+                    </div>
+
+                    <button type="submit" class="btn-clean-primary w-100 py-2 fw-semibold">
+                        Submit Ticket &rarr;
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Past Tickets Table -->
+        <div class="col-lg-7">
+            <div class="card-clean overflow-hidden h-100">
+                <div class="card-header-clean">
+                    <h5 class="fw-bold mb-0">My Support Tickets</h5>
+                </div>
+                <div class="table-responsive">
+                    <table class="table-clean">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Date</th>
+                                <th>Issue Details</th>
+                                <th>Admin Reply</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% if data['complaints'] %}
+                                {% for c in data['complaints'] %}
+                                <tr>
+                                    <td><span class="badge-clean badge-clean-neutral">{{ loop.index }}</span></td>
+                                    <td><small class="text-muted">{{ c['complaint_date'] }}</small></td>
+                                    <td>
+                                        <div class="small fw-semibold text-dark">{{ c['complaint'] }}</div>
+                                        {% if c['booking_id'] and c['booking_id'] != '0' %}
+                                            <small class="text-muted">Ref Booking #{{ c['booking_id'] }}</small>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if c['reply'] and c['reply'] != 'pending' %}
+                                            <div class="p-2 bg-light rounded small border">
+                                                <i class="fa fa-reply text-success me-1"></i> {{ c['reply'] }}
+                                            </div>
+                                        {% else %}
+                                            <span class="badge-clean badge-clean-warning">Under Review</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            {% else %}
+                                <tr>
+                                    <td colspan="4" class="text-center py-5 text-muted">
+                                        No support tickets filed. Everything is in order!
+                                    </td>
+                                </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% include 'footer.html' %}

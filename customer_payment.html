@@ -1,0 +1,132 @@
+{% include 'customer_header.html' %}
+
+<div class="container py-5" style="margin-top: 70px;">
+    <div class="row justify-content-center g-4">
+        <!-- Order Summary Card -->
+        <div class="col-lg-5">
+            <div class="card-clean p-4 h-100">
+                <span class="badge-clean badge-clean-neutral mb-2">Order Summary</span>
+                <h4 class="fw-bold mb-3">Booking #{{ data['booking']['booking_id'] }}</h4>
+
+                <div class="p-3 bg-light rounded-3 mb-4">
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-muted small">Service:</span>
+                        <strong class="text-dark small">{{ data['booking']['service'] }}</strong>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-muted small">Scheduled Date:</span>
+                        <span class="small">{{ data['booking']['booking_date'] }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-muted small">Shift Slot:</span>
+                        <span class="small">{{ data['booking']['slot'] }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-muted small">Maid Assigned:</span>
+                        <span class="small">{{ data['booking']['maid_fname'] }} {{ data['booking']['maid_lname'] }}</span>
+                    </div>
+                    <div class="border-top pt-2 mt-2">
+                        <small class="text-muted d-block">Address:</small>
+                        <span class="small fw-medium">{{ data['booking']['booking_address'] }}</span>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-between align-items-center p-3 rounded-3 border bg-white mt-auto">
+                    <div>
+                        <span class="text-muted small text-uppercase fw-semibold d-block">Amount Due</span>
+                        <span class="fs-4 fw-extrabold text-dark">₹{{ "%.2f"|format(data['booking']['total_amount']|float) }}</span>
+                    </div>
+                    <span class="badge-clean badge-clean-info">Inclusive of Taxes</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Payment Form -->
+        <div class="col-lg-6">
+            <div class="card-clean p-4">
+                <h5 class="fw-bold mb-3">Payment Options</h5>
+                <form action="" method="post">
+                    <!-- Method Selector -->
+                    <div class="row g-2 mb-4">
+                        <div class="col-4">
+                            <input type="radio" class="btn-check" name="payment_method" id="pay1" value="Credit/Debit Card" checked onchange="showPayTab('card')">
+                            <label class="btn btn-outline-secondary w-100 p-2 text-center small rounded-3" for="pay1">
+                                <i class="fa fa-credit-card d-block mb-1 fs-5"></i> Card
+                            </label>
+                        </div>
+                        <div class="col-4">
+                            <input type="radio" class="btn-check" name="payment_method" id="pay2" value="UPI" onchange="showPayTab('upi')">
+                            <label class="btn btn-outline-secondary w-100 p-2 text-center small rounded-3" for="pay2">
+                                <i class="fa fa-qrcode d-block mb-1 fs-5"></i> UPI / QR
+                            </label>
+                        </div>
+                        <div class="col-4">
+                            <input type="radio" class="btn-check" name="payment_method" id="pay3" value="Cash on Service" onchange="showPayTab('cash')">
+                            <label class="btn btn-outline-secondary w-100 p-2 text-center small rounded-3" for="pay3">
+                                <i class="fa fa-hand-holding-usd d-block mb-1 fs-5"></i> Cash
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Card Form Details -->
+                    <div id="cardTab">
+                        <div class="mb-3">
+                            <label class="form-label-clean">Card Number</label>
+                            <input type="text" class="form-control form-control-clean" placeholder="4532 •••• •••• 8921" value="4532 8921 7843 1102">
+                        </div>
+                        <div class="row g-2 mb-3">
+                            <div class="col-6">
+                                <label class="form-label-clean">Cardholder Name</label>
+                                <input type="text" class="form-control form-control-clean" value="Arun Kumar">
+                            </div>
+                            <div class="col-3">
+                                <label class="form-label-clean">Expiry</label>
+                                <input type="text" class="form-control form-control-clean" value="08/28">
+                            </div>
+                            <div class="col-3">
+                                <label class="form-label-clean">CVV</label>
+                                <input type="password" class="form-control form-control-clean" value="123">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- UPI Form Details -->
+                    <div id="upiTab" style="display: none;">
+                        <div class="p-3 bg-light rounded-3 text-center mb-3">
+                            <i class="fa fa-qrcode fa-4x text-dark mb-2"></i>
+                            <div class="small text-muted">Scan with Google Pay, PhonePe, or Paytm</div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label-clean">Or enter UPI ID / VPA</label>
+                            <input type="text" class="form-control form-control-clean" value="arun@okhdfcbank">
+                        </div>
+                    </div>
+
+                    <!-- Cash Details -->
+                    <div id="cashTab" style="display: none;">
+                        <div class="p-3 bg-light rounded-3 mb-3 small text-muted border">
+                            <i class="fa fa-info-circle text-primary me-1"></i> You can pay <strong>₹{{ "%.2f"|format(data['booking']['total_amount']|float) }}</strong> directly to the maid after the service is completed to your satisfaction.
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-clean-primary w-100 py-2 fw-bold mt-2">
+                        Confirm & Complete Booking &rarr;
+                    </button>
+                    <div class="text-center mt-3">
+                        <small class="text-muted"><i class="fa fa-lock me-1"></i> 256-bit encrypted checkout</small>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function showPayTab(type) {
+        document.getElementById('cardTab').style.display = (type === 'card') ? 'block' : 'none';
+        document.getElementById('upiTab').style.display = (type === 'upi') ? 'block' : 'none';
+        document.getElementById('cashTab').style.display = (type === 'cash') ? 'block' : 'none';
+    }
+</script>
+
+{% include 'footer.html' %}

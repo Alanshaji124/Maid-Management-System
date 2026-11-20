@@ -1,0 +1,152 @@
+{% include 'customer_header.html' %}
+
+<div class="container py-5" style="margin-top: 70px;">
+    <!-- Minimal Welcome Card -->
+    <div class="card-clean p-4 mb-4 border-0" style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); color: #ffffff;">
+        <div class="row align-items-center justify-content-between g-3">
+            <div class="col-md-8">
+                <span class="badge-clean badge-clean-info mb-2 text-white" style="background: rgba(255,255,255,0.15); border-color: rgba(255,255,255,0.2);">
+                    Welcome back
+                </span>
+                <h2 class="fw-bold mb-1 text-white">{{ data['customer']['c_fname'] }} {{ data['customer']['c_lname'] }}</h2>
+                <p class="small opacity-75 mb-0">Location: {{ data['customer']['c_city'] or 'Kochi' }} | Verified Customer Account</p>
+            </div>
+            <div class="col-md-4 text-md-end">
+                <a href="/customer/book" class="btn-clean-accent py-2 px-3 d-inline-block">
+                    <i class="fa fa-calendar-plus me-1"></i> Book a Maid Now
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Stats Grid -->
+    <div class="row g-3 mb-5">
+        <div class="col-md-4">
+            <div class="stat-card-clean">
+                <div class="stat-label">Total Bookings</div>
+                <div class="stat-value text-primary">{{ data['total_bookings'] }}</div>
+                <small class="text-muted">Lifetime domestic requests</small>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="stat-card-clean">
+                <div class="stat-label">Active Bookings</div>
+                <div class="stat-value text-warning">{{ data['active_bookings'] }}</div>
+                <small class="text-muted">Currently scheduled or in progress</small>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="stat-card-clean">
+                <div class="stat-label">Completed Services</div>
+                <div class="stat-value text-success">{{ data['completed_bookings'] }}</div>
+                <small class="text-muted">Successfully fulfilled</small>
+            </div>
+        </div>
+    </div>
+
+    <!-- Featured Services Grid -->
+    <div class="d-flex justify-content-between align-items-end mb-3">
+        <div>
+            <h4 class="fw-bold mb-1">Our Domestic Services</h4>
+            <p class="text-muted small mb-0">Professional cleaning, cooking, and family care options.</p>
+        </div>
+        <a href="/customer/services" class="small fw-semibold text-primary">View All &rarr;</a>
+    </div>
+
+    <div class="row g-3 mb-5">
+        {% for s in data['services'] %}
+        <div class="col-md-3 col-sm-6">
+            <div class="card-clean p-3 h-100 d-flex flex-column">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="badge-clean badge-clean-neutral">Service</span>
+                    <span class="fw-bold text-success">From ₹{{ s['rate'] }}</span>
+                </div>
+                <h6 class="fw-bold mb-1">{{ s['service'] }}</h6>
+                <p class="text-muted small flex-grow-1" style="font-size: 0.82rem;">{{ s['details'] }}</p>
+                <div class="mt-2 pt-2 border-top">
+                    <a href="/customer/book?service_id={{ s['service_id'] }}" class="btn-clean-outline btn-clean-sm w-100 text-center">Book This</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Recent Bookings Table with Minimal Stepper Indicator -->
+    <div class="card-clean overflow-hidden">
+        <div class="card-header-clean d-flex justify-content-between align-items-center">
+            <div>
+                <h5 class="fw-bold mb-0">Recent Bookings</h5>
+                <small class="text-muted">Track the progress of your scheduled maids</small>
+            </div>
+            <a href="/customer/mybookings" class="small fw-semibold text-primary">Full History &rarr;</a>
+        </div>
+        <div class="table-responsive">
+            <table class="table-clean">
+                <thead>
+                    <tr>
+                        <th>#Ref</th>
+                        <th>Service</th>
+                        <th>Schedule</th>
+                        <th>Assigned Maid</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if data['recent_bookings'] %}
+                        {% for b in data['recent_bookings'] %}
+                        <tr>
+                            <td><span class="badge-clean badge-clean-neutral">#{{ b['booking_id'] }}</span></td>
+                            <td><span class="fw-semibold text-dark">{{ b['service'] }}</span></td>
+                            <td>
+                                <div class="fw-medium">{{ b['booking_date'] }}</div>
+                                <small class="text-muted">{{ b['slot'] }}</small>
+                            </td>
+                            <td>
+                                {% if b['maid_fname'] and b['maid_fname'] != 'Unassigned' %}
+                                    <span class="text-success fw-medium"><i class="fa fa-check-circle me-1"></i> {{ b['maid_fname'] }} {{ b['maid_lname'] }}</span>
+                                {% else %}
+                                    <span class="badge-clean badge-clean-warning">Assigning Maid</span>
+                                {% endif %}
+                            </td>
+                            <td class="fw-bold text-dark">₹{{ b['total_amount'] }}</td>
+                            <td>
+                                {% if b['status'] == 'Confirmed' %}
+                                    <span class="badge-clean badge-clean-info">Confirmed</span>
+                                {% elif b['status'] == 'In Progress' %}
+                                    <span class="badge-clean badge-clean-warning">In Progress</span>
+                                {% elif b['status'] == 'Completed' %}
+                                    <span class="badge-clean badge-clean-success">Completed</span>
+                                {% elif b['status'] == 'Cancelled' %}
+                                    <span class="badge-clean badge-clean-danger">Cancelled</span>
+                                {% else %}
+                                    <span class="badge-clean badge-clean-neutral">{{ b['status'] }}</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if b['status'] == 'Pending' %}
+                                    <a href="/customer/payment?booking_id={{ b['booking_id'] }}" class="btn-clean-accent btn-clean-sm">Pay Now</a>
+                                {% elif b['status'] == 'Completed' %}
+                                    <a href="/customer/rate_maid?bid={{ b['booking_id'] }}" class="btn-clean-outline btn-clean-sm">Review</a>
+                                {% else %}
+                                    <a href="/customer/mybookings" class="btn-clean-outline btn-clean-sm">Track</a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="7" class="text-center py-5 text-muted">
+                                <i class="fa fa-calendar-times fa-2x mb-2 d-block text-muted opacity-50"></i>
+                                No active bookings right now. Click "+ Book a Maid Now" to get started!
+                            </td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+{% include 'footer.html' %}

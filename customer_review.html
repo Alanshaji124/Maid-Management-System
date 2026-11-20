@@ -1,0 +1,49 @@
+{% include 'customer_header.html' %}
+
+<div class="container py-5" style="margin-top: 70px;">
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <div class="card-clean p-4 p-md-5">
+                <div class="text-center mb-4">
+                    <span class="badge-clean badge-clean-neutral mb-2">Service Feedback</span>
+                    <h3 class="fw-bold mb-1">Rate Your Experience</h3>
+                    <p class="text-muted small">Your honest review helps us maintain quality household care.</p>
+                </div>
+
+                <div class="p-3 bg-light rounded-3 text-center mb-4">
+                    <div class="rounded-circle bg-white d-inline-flex align-items-center justify-content-center border mb-2" style="width: 56px; height: 56px;">
+                        <i class="fa fa-user text-muted fs-4"></i>
+                    </div>
+                    <h5 class="fw-bold mb-0">{{ data['booking']['maid_fname'] }} {{ data['booking']['maid_lname'] }}</h5>
+                    <small class="text-muted">{{ data['booking']['service'] }}</small>
+                </div>
+
+                <form action="" method="post">
+                    <div class="mb-4 text-center">
+                        <label class="form-label-clean d-block mb-2">Select Star Rating</label>
+                        <div class="btn-group" role="group">
+                            {% for star in [1, 2, 3, 4, 5] %}
+                            <input type="radio" class="btn-check" name="rating" id="star{{ star }}" value="{{ star }}" {% if star == 5 %}checked{% endif %}>
+                            <label class="btn btn-outline-warning px-3 py-2" for="star{{ star }}">{{ star }} ★</label>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label-clean">Your Review / Comments</label>
+                        <textarea name="review_text" rows="4" class="form-control form-control-clean" required placeholder="Was the maid punctual, thorough, and polite?"></textarea>
+                    </div>
+
+                    <button type="submit" class="btn-clean-primary w-100 py-2 fw-bold">
+                        Submit Review &rarr;
+                    </button>
+                    <div class="text-center mt-3">
+                        <a href="/customer/mybookings" class="small text-muted">Cancel and return</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% include 'footer.html' %}

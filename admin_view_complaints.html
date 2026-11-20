@@ -1,0 +1,82 @@
+{% include 'admin_header.html' %}
+
+<div class="container py-5" style="margin-top: 70px;">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <span class="badge-clean badge-clean-neutral mb-1">Support Desk</span>
+            <h3 class="fw-bold mb-0">Customer Complaints & Inquiries</h3>
+        </div>
+        <span class="badge-clean badge-clean-neutral">Total Tickets: {{ data['res']|length }}</span>
+    </div>
+
+    {% if data['replysec'] %}
+    <div class="card-clean p-4 mb-4" style="background: #fffdf5; border-color: var(--warning-border);">
+        <h5 class="fw-bold mb-2"><i class="fa fa-reply me-1 text-warning"></i> Send Resolution Reply</h5>
+        <form action="" method="post">
+            <div class="mb-3">
+                <textarea name="reply" class="form-control form-control-clean" rows="3" required placeholder="Type resolution or customer feedback response..."></textarea>
+            </div>
+            <div class="d-flex gap-2">
+                <button type="submit" name="submit" class="btn-clean-primary btn-clean-sm">Submit Reply</button>
+                <a href="/admin/adminviewcomplaints" class="btn-clean-outline btn-clean-sm">Cancel</a>
+            </div>
+        </form>
+    </div>
+    {% endif %}
+
+    <div class="card-clean overflow-hidden">
+        <div class="table-responsive">
+            <table class="table-clean">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Customer</th>
+                        <th>Location & Contact</th>
+                        <th>Complaint Details</th>
+                        <th>Date</th>
+                        <th>Reply Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if data['res'] %}
+                        {% for row in data['res'] %}
+                        <tr>
+                            <td><span class="badge-clean badge-clean-neutral">{{ loop.index }}</span></td>
+                            <td class="fw-semibold text-dark">{{ row['c_fname'] }} {{ row['c_lname'] }}</td>
+                            <td>
+                                <div>{{ row['c_city'] }}</div>
+                                <small class="text-muted">{{ row['c_phone'] }}</small>
+                            </td>
+                            <td>
+                                <div class="p-2 bg-light rounded small text-dark" style="max-width: 320px;">
+                                    {{ row['complaint'] }}
+                                </div>
+                            </td>
+                            <td><small class="text-muted">{{ row['complaint_date'] }}</small></td>
+                            <td>
+                                {% if row['reply'] and row['reply'] != 'pending' %}
+                                    <div class="small text-success fw-medium"><i class="fa fa-check-circle me-1"></i> {{ row['reply'] }}</div>
+                                {% else %}
+                                    <span class="badge-clean badge-clean-warning">Pending Resolution</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <a class="btn-clean-outline btn-clean-sm" href="?action=reply&cid={{ row['complaint_id'] }}">
+                                    {% if not row['reply'] or row['reply'] == 'pending' %}Reply{% else %}Edit{% endif %}
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="7" class="text-center py-5 text-muted">No complaints logged.</td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+{% include 'footer.html' %}
